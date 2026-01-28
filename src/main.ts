@@ -30,7 +30,15 @@ async function bootstrap() {
 
   const port = configService.get<number>('PORT', 3000);
   
-  await app.listen(port);
+  app.enableCors({
+    origin: 'http://localhost:3001',
+    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  });
+
+
+  await app.listen(port, '0.0.0.0');
   logger.log(`Social API Microservice running on port ${port}`);
 }
 bootstrap();
