@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/infra/prisma/prisma.service';
 
 @Injectable()
@@ -17,6 +17,26 @@ export class PostsService {
       },
     });
   }
+
+  async update(params: { postId: number; message: string, userId: number }) {
+    const post = await this.prisma.post.findUnique({
+      where: { id: params.postId},
+    });
+
+    if (!post) {
+      throw new NotFoundException('Post no encontrado');
+    }
+
+    if (post.userId !== params.userId) {
+      throw new NotFoundException('No puedes editar este post'); 
+    }
+
+    return this.prisma.post.update({
+      where: { id: params.postId },
+      data: { message: params.message },
+    });
+  }
+
 
   findAll() {
     return this.prisma.post.findMany({

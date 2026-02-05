@@ -15,6 +15,7 @@ import {
 import { JwtAuthGuard } from 'src/common/guards/jwt.guard';
 import { PostsService } from '../services/posts.service';
 import { CreatePostDto } from '../dto/create-post.dto';
+import { UpdatePostDto } from '../dto/update-post.dto';
 
 @ApiTags('Posts')
 @ApiBearerAuth()
@@ -32,6 +33,18 @@ export class PostsController {
         message: dto.message,
     });
   }
+
+  @Post('Update')
+  @ApiOperation({summary: 'Actualizar mensaje de la publicación'})
+  @ApiResponse({status: 200, description: 'Post actualizado'})
+  update(@Req() req, @Body() dto: UpdatePostDto & {postId: number}) {
+    return this.postsService.update({
+        postId: dto.postId,
+        message: dto.message,
+        userId: req.user.userId,
+    });
+  }
+
 
   @Get()
   @ApiOperation({ summary: 'Listar publicaciones' })
